@@ -63,6 +63,23 @@ def logout():
 	session.pop('username', None)
 	return redirect ('/')
 
+@app.route('/changepass')
+def changepass():
+	if request.method == "POST":
+		if 'username' in session:
+			if request.form['old_password'] == request.form['old_password2']:
+				autorization.change_pass(request.form['new_password'])
+				return render_template('main_info.html')
+			else:
+				flash("Wrong password or not equals")
+				return render_template('register_page.html')
+			flash(autorization.showAllUsers())
+			return render_template('changepass_page.html')
+	if request.method == "GET":
+		if 'username' in session:
+			return render_template('changepass_page.html')
+
+
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', debug=True)
