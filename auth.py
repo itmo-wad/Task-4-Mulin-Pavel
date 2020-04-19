@@ -39,10 +39,9 @@ def mainpage():
 
 @app.route('/showregistered', methods = ['GET','POST'])
 def showregistered():
-	if request.method == "POST":
-		if 'username' in session:
-			flash(autorization.showAllUsers())
-			return render_template('main_info.html')
+	if 'username' in session:
+		flash(autorization.showAllUsers())
+		return render_template('main_info.html')
 
 @app.route('/register', methods = ['GET','POST'])
 def register():
@@ -63,18 +62,20 @@ def logout():
 	session.pop('username', None)
 	return redirect ('/')
 
-@app.route('/changepass')
+@app.route('/changepass', methods = ['GET','POST'])
 def changepass():
 	if request.method == "POST":
 		if 'username' in session:
 			if request.form['old_password'] == request.form['old_password2']:
-				autorization.change_pass(request.form['new_password'])
-				return render_template('main_info.html')
+				if autorization.change_pass(session['username'], request.form['old_password'], request.form['new_password']):
+					flash("Password successfuly canged")
+					return render_template('main_info.html')
+				else:
+					flash("Wrong old password")
+					return render_template('changepass_page.html')
 			else:
-				flash("Wrong password or not equals")
-				return render_template('register_page.html')
-			flash(autorization.showAllUsers())
-			return render_template('changepass_page.html')
+				flash("Passwords should be the same")
+				return render_template('changepass_page.html')
 	if request.method == "GET":
 		if 'username' in session:
 			return render_template('changepass_page.html')
@@ -82,4 +83,4 @@ def changepass():
 
 
 if __name__ == "__main__":
-	app.run(host='0.0.0.0', debug=True)
+	app.run(host='localhost', debug=True)

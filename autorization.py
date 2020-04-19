@@ -31,6 +31,21 @@ def showAllUsers():
     secretdata = json.load(store)
     store.close()
     output = ''
-    for user, password in secretdata:
-        output += user + ' ' + password + "<br>"
+    print(type(secretdata))
+    for user in secretdata:
+        output += user + secretdata[user] + " || "
     return output
+
+
+def change_pass(username, old_password, new_password):
+    if user_exist(username, old_password):
+        store = open("secretdata.txt", "r")
+        secretdata = json.load(store)
+        store.close()
+        secretdata[username] = new_password
+        store = open("secretdata.txt", "w")
+        json.dump(secretdata, store)
+        store.close()
+        return True
+    else:
+        return False
