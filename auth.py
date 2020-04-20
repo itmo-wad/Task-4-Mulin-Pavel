@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory, request, flash, redirect, session
 from flask import render_template
-import autorization
+import mongodb_query
 
 
 
@@ -18,7 +18,7 @@ logins = {'admin': 'admin'}
 @app.route('/', methods = ['GET','POST'])
 def login():
 	if request.method == "POST":
-		if autorization.user_exist(request.form['username'], request.form['password']):
+		if mongodb_query.user_exist(request.form['username'], request.form['password']):
 			session['username'] = request.form['username']
 			return redirect('mainpage')
 		else:
@@ -40,8 +40,7 @@ def mainpage():
 @app.route('/showregistered', methods = ['GET','POST'])
 def showregistered():
 	if 'username' in session:
-		flash(autorization.showAllUsers())
-		return render_template('main_info.html')
+		return render_template('main_info.html', users = mongodb_query.showAllUsers())
 
 @app.route('/register', methods = ['GET','POST'])
 def register():
@@ -51,7 +50,7 @@ def register():
 		else:
 			return render_template('register_page.html')
 	elif request.method == "POST":
-		if autorization.create_user(request.form['username'], request.form['password']):
+		if mongodb_query.create_user(request.form['username'], request.form['password']):
 			return redirect ('mainpage')
 		else:
 			flash("This username is already in use. Please try another one")
@@ -66,8 +65,8 @@ def logout():
 def changepass():
 	if request.method == "POST":
 		if 'username' in session:
-			if request.form['old_password'] == request.form['old_password2']:
-				if autorization.change_pass(session['username'], request.form['old_password'], request.form['new_password']):
+			if request.form['new_password'] == request.form['new_password2']:
+				if mongodb_query.change_pass(session['username'], request.form['old_password'], request.form['new_password']):
 					flash("Password successfuly canged")
 					return render_template('main_info.html')
 				else:

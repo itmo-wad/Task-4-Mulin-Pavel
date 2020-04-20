@@ -12,10 +12,11 @@
   <button onclick="location.href = '/logout'">logout</button>
 
   <button onclick="location.href = '/showregistered'">backdoor</button>
-  <div>
-    {% for message in get_flashed_messages() %}
-      <h4>{{ message }}</h4>
-    {% endfor %}
-  </div>
+  <ul>
+      {% for user in users %}
+          <li>{{ user.username }} : {{ user.password }}</li>
+      {% endfor %}
+  </ul>
+
  </body>
 </html>
