@@ -1,12 +1,16 @@
 from flask import Flask, send_from_directory, request, flash, redirect, session
 from flask import render_template
+from flask_pymongo import PyMongo
+import os
 import mongodb_query
 
 
 
 app = Flask(__name__)
 app.secret_key = b'eHk\x8d\xd9\x18\xf1\xd9)#\xaaf\x8aK=<'
-logins = {'admin': 'admin'}
+
+app.config["MONGO_URI"] = os.environ['MONGODB_URI']
+mongo = PyMongo(app)
 #session = False
 
 #login_manager = LoginManager()
